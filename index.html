@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>政大應數 - 互動數學物理實驗室</title>
+    <!-- 引入 Tailwind CSS 樣式框架 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-gray-100 font-sans min-h-screen flex flex-col justify-between">
+
+    <!-- 頂部導覽列 Navbar -->
+    <nav class="bg-gray-800 border-b border-gray-700 px-6 py-4 flex justify-between items-center">
+        <div class="text-xl font-bold text-cyan-400 tracking-wider">⚡ NCCU AM - Interactive Lab</div>
+        <div class="space-x-4 text-sm text-gray-300">
+            <a href="#experiments" class="hover:text-cyan-400 transition">實驗列表</a>
+            <a href="#about" class="hover:text-cyan-400 transition">關於我們</a>
+        </div>
+    </nav>
+
+    <!-- 主視覺與實驗清單區 (Hero & Grid) -->
+    <main class="max-w-6xl mx-auto px-6 py-12 flex-grow">
+        <!-- 標題區 -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-extrabold mb-4 text-white">數學與物理互動模擬實驗室</h1>
+            <p class="text-gray-400 text-lg">政大應用數學系期末專案 | 探索動態公式與視覺化之美</p>
+        </div>
+
+        <!-- 10 個實驗的卡片網格 -->
+        <div id="experiments" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            
+            <!-- 實驗 1 -->
+            <div class="bg-gray-800 border border-gray-700 rounded-xl p-6 flex flex-col justify-between hover:border-cyan-500 transition shadow-lg">
+                <div>
+                    <span class="text-xs font-semibold bg-cyan-900 text-cyan-300 px-2.5 py-1 rounded">實驗 01</span>
+                    <h3 class="text-xl font-bold mt-3 mb-2 text-white">拋體運動模擬</h3>
+                    <p class="text-gray-400 text-sm mb-4">透過調整初速與拋射角度，觀察重力下的二次曲線軌跡。</p>
+                </div>
+                <a href="exp1.html" class="inline-block text-center bg-cyan-600 hover:bg-cyan-500 text-white font-medium py-2 px-4 rounded-lg transition">進入實驗 →</a>
+            </div>
+
+            <!-- 實驗 2 -->
+            <div class="bg-gray-800 border border-gray-700 rounded-xl p-6 flex flex-col justify-between hover:border-cyan-500 transition shadow-lg">
+                <div>
+                    <span class="text-xs font-semibold bg-cyan-900 text-cyan-300 px-2.5 py-1 rounded">實驗 02</span>
+                    <h3 class="text-xl font-bold mt-3 mb-2 text-white">傅立葉級數展開</h3>
+                    <p class="text-gray-400 text-sm mb-4">利用正弦與餘弦波疊加，逼近方波與三角波的動態過程。</p>
+                </div>
+                <a href="exp2.html" class="inline-block text-center bg-cyan-600 hover:bg-cyan-500 text-white font-medium py-2 px-4 rounded-lg transition">進入實驗 →</a>
+            </div>
+
+            <!-- 實驗 3 -->
+            <div class="bg-gray-800 border border-gray-700 rounded-xl p-6 flex flex-col justify-between hover:border-cyan-500 transition shadow-lg">
+                <div>
+                    <span class="text-xs font-semibold bg-cyan-900 text-cyan-300 px-2.5 py-1 rounded">實驗 03</span>
+                    <h3 class="text-xl font-bold mt-3 mb-2 text-white">常微分方程場 (ODE)</h3>
+                    <p class="text-gray-400 text-sm mb-4">視覺化向量場與微分方程的相圖與軌跡流線。</p>
+                </div>
+                <a href="exp3.html" class="inline-block text-center bg-cyan-600 hover:bg-cyan-500 text-white font-medium py-2 px-4 rounded-lg transition">進入實驗 →</a>
+            </div>
+
+            <!-- 實驗 4 -->
+            <div class="bg-gray-800 border border-gray-700 rounded-xl p-6 flex flex-col justify-between hover:border-cyan-500 transition shadow-lg">
+                <div>
+                    <span class="text-xs font-semibold bg-cyan-900 text-cyan-300 px-2.5 py-1 rounded">實驗 04</span>
+                    <h3 class="text-xl font-bold mt-3 mb-2 text-white">雙擺混沌現象</h3>
+                    <p class="text-gray-400 text-sm mb-4">探索雙擺系統在初始條件微小差異下的劇烈混沌行為。</p>
+                </div>
+                <a href="exp4.html" class="inline-block text-center bg-cyan-600 hover:bg-cyan-500 text-white font-medium py-2 px-4 rounded-lg transition">進入實驗 →</a>
+            </div>
+
+            <!-- 實驗 5 -->
+            <div class="bg-gray-800 border border-gray-700 rounded-xl p-6 flex flex-col justify-between hover:border-cyan-500 transition shadow-lg">
+                <div>
+                    <span class="text-xs font-semibold bg-cyan-900 text-cyan-300 px-2.5 py-1 rounded">實驗 05</span>
+                    <h3 class="text-xl font-bold mt-3 mb-2 text-white">波的干涉與繞射</h3>
+                    <p class="text-gray-400 text-sm mb-4">模擬水波雙狹縫干涉的波峰與波谷疊加圖樣。</p>
+                </div>
+                <a href="exp5.html" class="inline-block text-center bg-cyan-600 hover:bg-cyan-500 text-white font-medium py-2 px-4 rounded-lg transition">進入實驗 →</a>
+            </div>
+
+            <!-- 實驗 6 -->
+            <div class="bg-gray-800 border border-gray-700 rounded-xl p-6 flex flex-col justify-between hover:border-cyan-500 transition shadow-lg">
+                <div>
+                    <span class="text-xs font-semibold bg-cyan-900 text-cyan-300 px-2.5 py-1 rounded">實驗 06</span>
+                    <h3 class="text-xl font-bold mt-3 mb-2 text-white">蒙地卡羅法求 $\pi$</h3>
+                    <p class="text-gray-400 text-sm mb-4">透過隨機灑點落入圓形的比例，動態估算圓周率。</p>
+                </div>
+                <a href="exp6.html" class="inline-block text-center bg-cyan-600 hover:bg-cyan-500 text-white font-medium py-2 px-4 rounded-lg transition">進入實驗 →</a>
+            </div>
+
+            <!-- 實驗 7 -->
+            <div class="bg-gray-800 border border-gray-700 rounded-xl p-6 flex flex-col justify-between hover:border-cyan-500 transition shadow-lg">
+                <div>
+                    <span class="text-xs font-semibold bg-cyan-900 text-cyan-300 px-2.5 py-1 rounded">實驗 07</span>
+                    <h3 class="text-xl font-bold mt-3 mb-2 text-white">矩陣特徵值與線性變換</h3>
+                    <p class="text-gray-400 text-sm mb-4">觀察 2D 平面網格在矩陣作用下的旋轉、剪切與特徵向量。</p>
+                </div>
+                <a href="exp7.html" class="inline-block text-center bg-cyan-600 hover:bg-cyan-500 text-white font-medium py-2 px-4 rounded-lg transition">進入實驗 →</a>
+            </div>
+
+            <!-- 實驗 8 -->
+            <div class="bg-gray-800 border border-gray-700 rounded-xl p-6 flex flex-col justify-between hover:border-cyan-500 transition shadow-lg">
+                <div>
+                    <span class="text-xs font-semibold bg-cyan-900 text-cyan-300 px-2.5 py-1 rounded">實驗 08</span>
+                    <h3 class="text-xl font-bold mt-3 mb-2 text-white">熱傳導方程式</h3>
+                    <p class="text-gray-400 text-sm mb-4">模擬一維或二維金屬棒在加熱後的溫度擴散熱分佈。</p>
+                </div>
+                <a href="exp8.html" class="inline-block text-center bg-cyan-600 hover:bg-cyan-500 text-white font-medium py-2 px-4 rounded-lg transition">進入實驗 →</a>
+            </div>
+
+            <!-- 實驗 9 -->
+            <div class="bg-gray-800 border border-gray-700 rounded-xl p-6 flex flex-col justify-between hover:border-cyan-500 transition shadow-lg">
+                <div>
+                    <span class="text-xs font-semibold bg-cyan-900 text-cyan-300 px-2.5 py-1 rounded">實驗 09</span>
+                    <h3 class="text-xl font-bold mt-3 mb-2 text-white">質能守恆與彈性碰撞</h3>
+                    <p class="text-gray-400 text-sm mb-4">模擬多顆圓球在牆面與彼此碰撞間的動量與能量守恆。</p>
+                </div>
+                <a href="exp9.html" class="inline-block text-center bg-cyan-600 hover:bg-cyan-500 text-white font-medium py-2 px-4 rounded-lg transition">進入實驗 →</a>
+            </div>
+
+            <!-- 實驗 10 -->
+            <div class="bg-gray-800 border border-gray-700 rounded-xl p-6 flex flex-col justify-between hover:border-cyan-500 transition shadow-lg">
+                <div>
+                    <span class="text-xs font-semibold bg-cyan-900 text-cyan-300 px-2.5 py-1 rounded">實驗 10</span>
+                    <h3 class="text-xl font-bold mt-3 mb-2 text-white">牛頓法根尋找演算法</h3>
+                    <p class="text-gray-400 text-sm mb-4">動態展示方程式切線疊代尋找函數根的收斂過程。</p>
+                </div>
+                <a href="exp10.html" class="inline-block text-center bg-cyan-600 hover:bg-cyan-500 text-white font-medium py-2 px-4 rounded-lg transition">進入實驗 →</a>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- 頁尾 -->
+    <footer class="bg-gray-800 border-t border-gray-700 text-center py-6 text-sm text-gray-500">
+        © 2026 NCCU Applied Mathematics Group Project. All Rights Reserved.
+    </footer>
+
+</body>
+</html>
