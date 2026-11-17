@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <title>摩擦力與斜面 | 物體為什麼會滑下來？</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans p-6">
+
+    <div class="max-w-4xl mx-auto bg-white p-6 rounded-xl shadow-lg">
+        <!-- 標題 -->
+        <h1 class="text-2xl font-bold text-center text-gray-800 mb-1">摩擦力與斜面 | 物體為什麼會滑下來？</h1>
+        <p class="text-center text-gray-600 text-sm mb-4">斜面上的方塊與受力分析（箭頭長度為示意）</p>
+
+        <!-- 頂部左右對稱資訊框（相同圓角、高度與外框） -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+            <div id="status-badge" class="px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg text-sm font-semibold text-gray-700 flex items-center">
+                狀態：靜止不動
+            </div>
+            <div id="params-badge" class="px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg text-xs font-mono text-gray-700 flex items-center justify-between">
+                <span>m = <span id="p-m">5.0</span> kg</span>
+                <span>θ = <span id="p-theta">30.0</span>°</span>
+                <span>μs = <span id="p-mus">0.50</span></span>
+                <span>μk = <span id="p-muk">0.30</span></span>
+            </div>
+        </div>
+
+        <!-- 模擬畫布 -->
+        <div class="border border-gray-300 rounded-lg p-3 bg-white mb-6">
+            <canvas id="inclineCanvas" width="760" height="320" class="w-full bg-slate-50 border border-gray-200 rounded"></canvas>
+        </div>
+
+        <!-- 互動控制拉桿 -->
+        <div class="grid grid-cols-1 gap-3 mb-6 bg-gray-50 p-4 rounded-lg border">
+            <div>
+                <div class="flex justify-between text-sm font-medium text-gray-700 mb-1">
+                    <span>質量 m (kg)</span>
+                    <span id="val-m" class="font-bold">5.0</span>
+                </div>
+                <input type="range" id="slider-m" min="1" max="20" step="0.5" value="5.0" class="w-full cursor-pointer">
+            </div>
+            <div>
+                <div class="flex justify-between text-sm font-medium text-gray-700 mb-1">
+                    <span>斜面角度 θ (°)</span>
+                    <span id="val-theta" class="font-bold">30</span>
+                </div>
+                <input type="range" id="slider-theta" min="5" max="55" step="1" value="30" class="w-full cursor-pointer">
+            </div>
+            <div>
+                <div class="flex justify-between text-sm font-medium text-gray-700 mb-1">
+                    <span>靜摩擦係數 μs</span>
+                    <span id="val-mus" class="font-bold">0.50</span>
+                </div>
+                <input type="range" id="slider-mus" min="0" max="1" step="0.05" value="0.50" class="w-full cursor-pointer">
+            </div>
+            <div>
+                <div class="flex justify-between text-sm font-medium text-gray-700 mb-1">
+                    <span>動摩擦係數 μk</span>
+                    <span id="val-muk" class="font-bold">0.30</span>
+                </div>
+                <input type="range" id="slider-muk" min="0" max="1" step="0.05" value="0.30" class="w-full cursor-pointer">
+            </div>
+        </div>
+
+        <!-- 控制按鈕 -->
+        <div class="flex justify-center gap-4">
+            <button id="btn-play" class="px-6 py-2 bg-blue-600 text-white font-medium rounded-lg shadow hover:bg-blue-700 transition">播放</button>
+            <button id="btn-pause" class="px-6 py-2 bg-amber-500 text-white font-medium rounded-lg shadow hover:bg-amber-600 transition">暫停</button>
+            <button id="btn-reset" class="px-6 py-2 bg-gray-600 text-white font-medium rounded-lg shadow hover:bg-gray-700 transition">重置</button>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('inclineCanvas');
+        const ctx = canvas.getContext('2d');
+
+        let m = 5.0, theta = 30, mu_s = 0.50, mu_k = 0.30;
+        const g = 9.81; // 與參考圖一致：5.0 * 9.81 = 49.1 N
+        let t = 0.0, s = 0.0, v = 0.0; // s 為從右上方頂點往左下方滑動的像素距離
+        let isPlaying = false;
+
+        function updateParams() {
+            m = parseFloat(document.getElementById('slider-m').value);
+            theta = parseFloat(document.getElementById('slider-theta').value);
+            mu_s = parseFloat(document.getElementById('slider-mus').value);
+            mu_k = parseFloat(document.getElementById('slider-muk').value);
+
+            document.getElementById('val-m').innerText = m.toFixed(1);
+            document.getElementById('val-theta').innerText = theta;
+            document.getElementById('val-mus').innerText = mu_s.toFixed(2);
+            document.getElementById('val-muk').innerText = mu_k.toFixed(2);
+
+            document.getElementById('p-m').innerText = m.toFixed(1);
+            document.getElementById('p-theta').innerText = theta.toFixed(1);
+            document.getElementById('p-mus').innerText = mu_s.toFixed(2);
+            document.getElementById('p-muk').innerText = mu_k.toFixed(2);
+
+            if (!isPlaying) {
+                draw();
+            }
+        }
+
+        function resetSimulation() {
+            isPlaying = false;
+            t = 0.0;
+            s = 0.0;
+            v = 0.0;
+            updateParams();
+            draw();
+        }
+
+        // 繪製向量箭頭與雙行標籤（支援微調文字偏移避免重疊）
+        function drawVector(fromX, fromY, dx, dy, color, line1, line2, offsetX = 0, offsetY = 0, align = 'center') {
+            const toX = fromX + dx;
+            const toY = fromY + dy;
+
+            ctx.strokeStyle = color;
+            ctx.fillStyle = color;
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            ctx.moveTo(fromX, fromY);
+            ctx.lineTo(toX, toY);
+            ctx.stroke();
+
+            // 箭頭頭部
+            const headLength = 8;
+            const angle = Math.atan2(dy, dx);
+            ctx.beginPath();
+            ctx.moveTo(toX, toY);
+            ctx.lineTo(toX - headLength * Math.cos(angle - Math.PI / 6), toY - headLength * Math.sin(angle - Math.PI / 6));
+            ctx.lineTo(toX - headLength * Math.cos(angle + Math.PI / 6), toY - headLength * Math.sin(angle + Math.PI / 6));
+            ctx.closePath();
+            ctx.fill();
+
+            // 雙行標籤（名稱 + 數值）
+            ctx.font = 'bold 12px sans-serif';
+            ctx.textAlign = align;
+            ctx.fillText(line1, toX + offsetX, toY + offsetY);
+            ctx.font = '12px sans-serif';
+            ctx.fillText(line2, toX + offsetX, toY + offsetY + 15);
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const rad = theta * Math.PI / 180;
+            const sinT = Math.sin(rad);
+            const cosT = Math.cos(rad);
+
+            // 物理受力計算
+            const mg = m * g;
+            const fParallel = mg * sinT;       // 平行分力 mg sinθ（沿斜面向左下）
+            const normal = mg * cosT;          // 正向力 N & 垂直分力 mg cosθ
+            const maxStaticF = mu_s * normal;  // 最大靜摩擦力
+
+            let statusText = '';
+            let friction = 0;
+
+            if (isPlaying && fParallel > maxStaticF) {
+                friction = mu_k * normal;
+                const a = (fParallel - friction) / m;
+                statusText = `狀態：向下滑動（動摩擦力，a = ${a.toFixed(2)} m/s²）`;
+            } else if (fParallel > maxStaticF) {
+                friction = mu_k * normal;
+                statusText = '狀態：可向下滑動（點擊播放開始）';
+            } else {
+                friction = fParallel; // 靜止時靜摩擦力大小等於平行分力
+                statusText = '狀態：靜止不動（靜摩擦力平衡）';
+            }
+            document.getElementById('status-badge').innerText = statusText;
+
+            // 斜面幾何座標（左下低、右上高）
+            const leftX = 160, leftY = 235;
+            const slopeLen = 360;
+            const rightX = leftX + slopeLen * cosT;
+            const rightY = leftY - slopeLen * sinT;
+
+            // 畫斜面填充與斜邊（與附圖風格一致）
+            ctx.beginPath();
+            ctx.moveTo(leftX, leftY);
+            ctx.lineTo(rightX, rightY);
+            ctx.lineTo(rightX, leftY);
+            ctx.closePath();
+            ctx.fillStyle = '#e2e8f0';
+            ctx.fill();
+
+            ctx.strokeStyle = '#475569';
+            ctx.lineWidth = 6;
+            ctx.lineCap = 'round';
+            ctx.beginPath();
+            ctx.moveTo(leftX, leftY);
+            ctx.lineTo(rightX, rightY);
+            ctx.stroke();
+
+            // 角度弧線與 θ 標示
+            ctx.strokeStyle = '#64748b';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.arc(leftX, leftY, 36, -rad, 0);
+            ctx.stroke();
+            ctx.fillStyle = '#475569';
+            ctx.font = '12px sans-serif';
+            ctx.textAlign = 'left';
+            ctx.fillText(`θ = ${theta}°`, leftX + 42, leftY - 6);
+
+            // 方塊位置：從右上方頂點（留出 45px 邊距）沿斜面向左下方滑動 s
+            const startOffset = 45;
+            const maxSlide = slopeLen - 90;
+            const currentDist = Math.min(startOffset + s, startOffset + maxSlide);
+
+            // 斜面接觸點座標
+            const contactX = rightX - currentDist * cosT;
+            const contactY = rightY + currentDist * sinT;
+
+            // 畫藍色方塊（底部貼合斜面，旋轉 -theta）
+            const boxSize = 36;
+            ctx.save();
+            ctx.translate(contactX, contactY);
+            ctx.rotate(-rad);
+
+            ctx.fillStyle = '#60a5fa';
+            ctx.fillRect(-boxSize / 2, -boxSize, boxSize, boxSize);
+            ctx.strokeStyle = '#1e3a8a';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(-boxSize / 2, -boxSize, boxSize, boxSize);
+
+            ctx.fillStyle = '#0f172a';
+            ctx.font = 'bold 14px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('m', 0, -boxSize / 2 + 5);
+            ctx.restore();
+
+            // 方塊正中心絕對座標（所有向量由此出發）
+            const centerX = contactX - (boxSize / 2) * sinT;
+            const centerY = contactY - (boxSize / 2) * cosT;
+
+            // 向量比例尺（確保箭頭長度適中且標籤完全展開不重疊）
+            const scale = 1.35;
+
+            // 1. 正向力 N（綠色）：垂直斜面往左上 (-sinT, -cosT)
+            const lenN = normal * scale;
+            drawVector(
+                centerX, centerY,
+                -lenN * sinT, -lenN * cosT,
+                '#15803d',
+                '正向力 N', `${normal.toFixed(1)} N`,
+                0, -24, 'center'
+            );
+
+            // 2. 摩擦力 f（紫色）：沿斜面往右上 (+cosT, -sinT)
+            const lenF = Math.max(friction * scale, 18); // 保留最小可視長度方便看方向
+            drawVector(
+                centerX, centerY,
+                lenF * cosT, -lenF * sinT,
+                '#7e22ce',
+                '摩擦力 f', `${friction.toFixed(1)} N`,
+                10, -18, 'left'
+            );
+
+            // 3. 平行分力 mg sinθ（紅色）：沿斜面往左下 (-cosT, +sinT)
+            const lenP = fParallel * scale;
+            drawVector(
+                centerX, centerY,
+                -lenP * cosT, lenP * sinT,
+                '#dc2626',
+                '平行分力 mg sinθ', `${fParallel.toFixed(1)} N`,
+                -10, 14, 'right'
+            );
+
+            // 4. 垂直分力 mg cosθ（橘色）：垂直斜面往右下 (+sinT, +cosT)
+            drawVector(
+                centerX, centerY,
+                lenN * sinT, lenN * cosT,
+                '#d97706',
+                '垂直分力 mg cosθ', `${normal.toFixed(1)} N`,
+                10, 12, 'left'
+            );
+
+            // 5. 重力 mg（黑色）：鉛直向下 (0, +1)
+            const lenG = mg * scale;
+            drawVector(
+                centerX, centerY,
+                0, lenG,
+                '#0f172a',
+                '重力 mg', `${mg.toFixed(1)} N`,
+                -8, 14, 'right'
+            );
+        }
+
+        function step() {
+            if (!isPlaying) return;
+            const dt = 0.05;
+            t += dt;
+
+            const rad = theta * Math.PI / 180;
+            const fParallel = m * g * Math.sin(rad);
+            const normal = m * g * Math.cos(rad);
+            const maxStaticF = mu_s * normal;
+
+            if (fParallel <= maxStaticF) {
+                isPlaying = false;
+                v = 0;
+                s = 0;
+            } else {
+                const friction = mu_k * normal;
+                const a = (fParallel - friction) / m;
+                v = a * t;
+                // 乘上視覺位移倍率讓滑動過程順暢自然
+                s = 0.5 * a * t * t * 18;
+            }
+
+            const slopeLen = 360;
+            if (s >= slopeLen - 90) {
+                s = slopeLen - 90;
+                isPlaying = false;
+            }
+
+            draw();
+        }
+
+        document.getElementById('slider-m').addEventListener('input', updateParams);
+        document.getElementById('slider-theta').addEventListener('input', updateParams);
+        document.getElementById('slider-mus').addEventListener('input', updateParams);
+        document.getElementById('slider-muk').addEventListener('input', updateParams);
+
+        document.getElementById('btn-play').addEventListener('click', () => {
+            const rad = theta * Math.PI / 180;
+            const fParallel = m * g * Math.sin(rad);
+            const maxStaticF = mu_s * m * g * Math.cos(rad);
+
+            if (fParallel <= maxStaticF) {
+                alert('目前平行分力小於或等於最大靜摩擦力，方塊會保持靜止！請調大斜面角度 θ 或調小靜摩擦係數 μs。');
+                return;
+            }
+            // 若已滑到底部，按播放自動從頂點重新開始
+            if (s >= 270) {
+                t = 0;
+                s = 0;
+                v = 0;
+            }
+            isPlaying = true;
+        });
+
+        document.getElementById('btn-pause').addEventListener('click', () => { isPlaying = false; });
+        document.getElementById('btn-reset').addEventListener('click', resetSimulation);
+
+        updateParams();
+        setInterval(step, 50);
+    </script>
+</body>
+</html>

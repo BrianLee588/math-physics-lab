@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>互動數學物理實驗室</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-gray-100 font-sans min-h-screen flex flex-col justify-between">
+
+    <!-- 導覽列 -->
+    <nav class="bg-gray-800 border-b border-gray-700 px-6 py-4 flex justify-between items-center">
+        <a href="index.html" class="text-sm text-cyan-400 hover:underline">← 返回實驗列表首頁</a>
+        <span class="text-gray-400 font-medium">NCCU 應數實驗室</span>
+    </nav>
+
+    <!-- 實驗核心版面 (左側說明，右側挖空放模擬器) -->
+    <main class="max-w-6xl mx-auto px-6 py-8 grid grid-cols-1 lg:grid-cols-3 gap-8 w-full flex-grow">
+        
+        <!-- 左側：實驗介紹與數學原理 -->
+        <div class="lg:col-span-1 bg-gray-800 border border-gray-700 p-6 rounded-xl shadow-lg">
+            <h1 class="text-2xl font-bold text-cyan-300 mb-3">實驗內容介紹</h1>
+            <p class="text-gray-300 text-sm leading-relaxed mb-6">
+                本實驗為小組成員開發之數學與物理動態模擬專案，透過互動介面觀察函數與物理模型的視覺化表現。
+            </p>
+            <div class="bg-gray-900 p-4 rounded-lg border border-gray-700 text-xs text-gray-400 space-y-2">
+                <p><strong class="text-gray-300">使用說明：</strong></p>
+                <p>1. 調整右側參數或操作互動介面。</p>
+                <p>2. 觀察即時運算與圖形變化。</p>
+            </div>
+        </div>
+
+        <!-- 右側：挖好的核心坑 (等待一週後組員交出 Python 程式交給我轉譯) -->
+        <div class="lg:col-span-2 bg-gray-800 border border-gray-700 p-6 rounded-xl shadow-lg flex flex-col justify-center items-center min-h-[500px]">
+            <div id="simulation-slot" class="w-full h-full flex flex-col items-center justify-center border-2 border-dashed border-gray-600 rounded-lg p-8">
+                <span class="text-cyan-400 font-semibold mb-2 text-lg">🚀 模擬程式預留區 (Placeholder)</span>
+                <span class="text-gray-500 text-sm text-center">等待組員交出 Python 原始碼，屆時將由 AI 協助轉譯嵌入至此處。</span>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- 頁尾 -->
+    <footer class="bg-gray-800 border-t border-gray-700 text-center py-4 text-xs text-gray-500">
+        NCCU Applied Mathematics
+    </footer>
+
+</body>
+</html>
